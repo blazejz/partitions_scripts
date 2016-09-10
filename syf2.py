@@ -28,7 +28,7 @@ def gen_levels(mod, arity):
         yield old
 
 
-def check(lvl, prev, mod, levels):
+def check(lvl, prev, mod, levels, step):
     if lvl >= len(levels):
         return None
 
@@ -39,12 +39,12 @@ def check(lvl, prev, mod, levels):
     else:
         prev = np.pad(prev, (1, 0), mode='constant')
 
-    for k in range(mod):
+    for k in range(0, mod, step):
         prev[0] = k
         if np.any(((levels[lvl] * prev).sum(axis=1) % mod) == 0):
             continue
         else:
-            r = check(lvl + 1, prev, mod, levels)
+            r = check(lvl + 1, prev, mod, levels, step)
             if r is None:
                 return None
             else:
@@ -53,7 +53,7 @@ def check(lvl, prev, mod, levels):
     return result
 
 
-def main(mod, levels, arity):
+def main(mod, levels, arity, step):
     levels_list = []
 
     for i, lvl in enumerate(gen_levels(mod, arity)):
@@ -61,7 +61,7 @@ def main(mod, levels, arity):
         if i >= levels - 1:
             break
 
-    result = check(0, None, mod, levels_list)
+    result = check(0, None, mod, levels_list, step)
     if result is not None:
         result += 1
 
@@ -71,6 +71,7 @@ def main(mod, levels, arity):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--mod', type=int, required=True)
+    parser.add_argument('--step', type=int, default=1)
     parser.add_argument('--levels', type=int, default=10)
     parser.add_argument('--arity', type=int, default=2)
     main(**vars(parser.parse_args()))
