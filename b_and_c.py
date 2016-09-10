@@ -104,7 +104,7 @@ def main(min_m, max_m, func):
         for p in sorted(results):
             lines.append((m, p, results[p]['n'], ))
 
-    print_minipages(lines, 45)
+    print_minipages(lines, 40)
 
     print("\\end{document}")
 
