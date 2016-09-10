@@ -18,7 +18,30 @@ def find_primes(p, q):
             yield k
 
 
-def find_b5(m):
+def find_cm(m):
+    bound = m*m + m + 1
+    primes = set(find_primes(m + 2, bound + 1))
+    results = {}
+
+    b = [1, 1]
+    i = 2
+
+    while len(primes):
+        if i % m == 1:
+            t = b[(i - 1) // 5] + b[i - 5]
+        else:
+            t = b[i - 1]
+        b.append(t)
+        for p in primes.copy():
+            if t % p == 0:
+                primes.remove(p)
+                results[p] = {'n': i, 'b': t}
+        i += 1
+
+    return results
+
+
+def find_bm(m):
     bound = m*m + m + 1
     primes = set(find_primes(m + 2, bound + 1))
     results = {}
@@ -28,7 +51,7 @@ def find_b5(m):
 
     while len(primes):
         if i % m == 0:
-            t = b[(i - 5) // 5 + 1] + b[i - 5]
+            t = b[i // 5] + b[i - 5]
         else:
             t = b[i - 1]
         b.append(t)
@@ -66,14 +89,18 @@ def print_minipages(lines, k):
     print("\\end{center}")
 
 
-def main(min_m, max_m):
+def main(min_m, max_m, func):
     print("\\documentclass[a4paper, 10pt]{article}")
     print("\\usepackage[a4paper, top=3.5cm, bottom=3.5cm]{geometry}")
     print("\\begin{document}")
 
     lines = []
     for m in range(min_m, max_m + 1):
-        results = find_b5(m)
+        if func == 'b':
+            results = find_bm(m)
+        elif func == 'c':
+            results = find_cm(m)
+
         for p in sorted(results):
             lines.append((m, p, results[p]['n'], ))
 
@@ -84,6 +111,7 @@ def main(min_m, max_m):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--func', required=True)
     parser.add_argument('--min-m', type=int, required=True)
     parser.add_argument('--max-m', type=int, required=True)
     main(**vars(parser.parse_args()))
