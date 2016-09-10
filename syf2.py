@@ -6,21 +6,21 @@ import numpy as np
 TYPE = np.int64
 
 
-def gen_levels(mod):
+def gen_levels(mod, arity):
     old = np.array([[1]], dtype=TYPE)
     yield old
 
     while True:
         old_h, old_w = old.shape
 
-        h = 1 + old_h + old_h
+        h = 1 + old_h * arity
         w = old_w + 1
 
         new = np.zeros((h, w), dtype=TYPE)
         new[:, 0] += 1
         for i, row in enumerate(old):
-            new[2*i+1:, 1:] += row
-            new[2*i+2:, 1:] += row
+            for j in range(arity):
+                new[2*i+1+j:, 1:] += row
 
         new %= mod
 
@@ -53,19 +53,24 @@ def check(lvl, prev, mod, levels):
     return result
 
 
-def main(mod, levels):
+def main(mod, levels, arity):
     levels_list = []
 
-    for i, lvl in enumerate(gen_levels(mod)):
+    for i, lvl in enumerate(gen_levels(mod, arity)):
         levels_list.append(lvl)
         if i >= levels - 1:
             break
 
-    print(check(0, None, mod, levels_list))
+    result = check(0, None, mod, levels_list)
+    if result is not None:
+        result += 1
+
+    print(result)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--mod', type=int, required=True)
-    parser.add_argument('--levels', type=int, required=True)
+    parser.add_argument('--levels', type=int, default=10)
+    parser.add_argument('--arity', type=int, default=2)
     main(**vars(parser.parse_args()))
