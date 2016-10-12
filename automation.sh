@@ -1,1 +1,6 @@
-while [ 1 ]; do git add --all .; git commit -m update; git push; sleep 5m; done &
+function git() {
+    cd out/
+    while [ 1 ]; do git add --all .; git commit -m update; git push; sleep 5m; done
+}
+
+git &
