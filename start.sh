@@ -14,7 +14,7 @@ function start() {
     echo "$script"
     screen -ls | grep "\.$session_name\s" > /dev/null
     if (( $? )); then
-        screen -md -S "$session_name" /bin/bash "$script" "$out_file"
+        nice screen -md -S "$session_name" /bin/bash "$script" "$out_file"
     fi
 }
 
