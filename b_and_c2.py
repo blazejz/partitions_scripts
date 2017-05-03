@@ -19,22 +19,37 @@ def find_primes(p, q):
 
 
 def find_cm(m):
-    bound = m*m + m + 1
+    # $\text{bound} := m^2 + m + 1$
+    bound = m * m + m + 1
+    # $\text{primes} := \text{set of primes from range } [m+2, \text{bound}+1)$
     primes = set(find_primes(m + 2, bound + 1))
+
+    # results dictionary
     results = {}
 
+    # initialize main table
     b = [1, 1]
+    # counter
     i = 2
 
+    # while any prime remains
     while len(primes):
+        # if $i \equiv 1 \pmod{m}$
         if i % m == 1:
+            # $t := b_{\lfloor (i - 1) / 5\rfloor} + b_{i - 5}$
             t = b[(i - 1) // 5] + b[i - 5]
         else:
+            # $t := b_{i - 1}$
             t = b[i - 1]
         b.append(t)
+
+        # foreach prime $p$ remaining
         for p in primes.copy():
+            # if $t \equiv 0 \pmod{p}$
             if t % p == 0:
+                # remove $p$ from set
                 primes.remove(p)
+                # set result for the prime $p$
                 results[p] = {'n': i, 'b': t}
         i += 1
 
@@ -42,22 +57,36 @@ def find_cm(m):
 
 
 def find_bm(m):
-    bound = m*m + m + 1
+    # $\text{bound} := m^2 + m + 1$
+    bound = m * m + m + 1
+    # $\text{primes} := \text{set of primes from range } [m+2, \text{bound}+1)$
     primes = set(find_primes(m + 2, bound + 1))
+
+    # results dictionary
     results = {}
 
+    # initialize main table
     b = [1]
+    # counter
     i = 1
 
+    # while any prime remains
     while len(primes):
+        # if $i \equiv 1 \pmod{m}$
         if i % m == 0:
+            # $t := b_{\lfloor i / 5\rfloor} + b_{i - 5}$
             t = b[i // 5] + b[i - 5]
         else:
+            # $t := b_{i - 1}$
             t = b[i - 1]
         b.append(t)
+        # foreach prime $p$ remaining
         for p in primes.copy():
+            # if $t \equiv 0 \pmod{p}$
             if t % p == 0:
+                # remove $p$ from set
                 primes.remove(p)
+                # set result for the prime $p$
                 results[p] = {'n': i, 'b': t}
         i += 1
 
